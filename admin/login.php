@@ -89,7 +89,7 @@ if( isset($_POST["masuk"]) ) {
       <div class="login-logo"><img width="185px" src="../images/icons/logodimas.png"></div>
       <p class="login-box-msg">Silahkan Masukan Username & Password</p>
 
-      <form action="" method="post">
+      <form id="quickForm" action="" method="post">
         <div class="input-group mb-3">
           <input type="text" class="form-control" placeholder="Username" name="username" id="username">
           <div class="input-group-append">
@@ -144,7 +144,50 @@ if( isset($_POST["masuk"]) ) {
 <script src="plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- jquery-validation -->
+<script src="plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="plugins/jquery-validation/additional-methods.min.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
+
+<script>
+$(function () {
+  $.validator.setDefaults({
+    
+  });
+  $('#quickForm').validate({
+    rules: {
+      username: {
+        required: true,        
+      },
+      password: {
+        required: true,
+        minlength: 5
+      },      
+    },
+    messages: {
+      username: {
+        required: "Tolong masukkan username terlebih dahulu",        
+      },
+      password: {
+        required: "Tolong masukkan password terlebih dahulu",
+        minlength: "Password anda kurang dari 5 karakter"
+      },
+      
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.input-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+</script>
 </body>
 </html>

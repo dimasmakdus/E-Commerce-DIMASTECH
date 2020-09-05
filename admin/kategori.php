@@ -9,6 +9,7 @@ if( !isset($_SESSION["masuk"]) ) {
 require '../functions.php';
 require 'tampilusers.php';
 $daftar_kategori = query("SELECT * FROM kategori");
+notif();
 
 ?>
 
@@ -28,6 +29,8 @@ $daftar_kategori = query("SELECT * FROM kategori");
   <!-- DataTables -->
   <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="plugins/toastr/toastr.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
 </head>
@@ -275,8 +278,8 @@ $daftar_kategori = query("SELECT * FROM kategori");
               <!-- /.card-header -->
               <div class="card-body">
                 <!-- Tambah data mahasiswa -->
-              <a href="tambahkategori.php" type="submit" name="tambah" class="btn btn-primary">
-              <i class="nav-icon fas fa-plus"></i> Tambah Kategori</a>
+              <button class="btn btn-primary" data-toggle="modal" data-target="#tambah-kategori">
+              <i class="nav-icon fas fa-plus"></i> Tambah Kategori</button>
               <br><br>
 
                 <table id="example1" class="table table-bordered table-striped">
@@ -294,13 +297,110 @@ $daftar_kategori = query("SELECT * FROM kategori");
                     <td><?= $kategori["id"]; ?></td>
                     <td><?= $kategori["nama"]; ?></td>
                     <td>
-                      <a href="ubahkategori.php?id=<?= $kategori["id"]; ?>" class="btn btn-sm btn-info">
-                      <i class="nav-icon fas fa-pen"></i> Ubah</a>
-                      <a href="hapuskategori.php?id=<?= $kategori["id"]; ?>" class="btn btn-sm btn-danger">
-                      <i class="nav-icon fas fa-trash"></i> Hapus</a>
+                      <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#ubah-<?= $kategori['id']; ?>"><i class="nav-icon fas fa-pen"></i> Ubah</button>
+                      <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#hapus-<?= $kategori["id"]; ?>" >
+                      <i class="nav-icon fas fa-trash"></i> Hapus</button>
                     </td>
                   </tr>
-                  <?php endforeach; ?>
+
+                  <!-- modal konfirmasi hapus -->
+                  <div class="modal fade" id="hapus-<?= $kategori["id"]; ?>">
+                    <div class="modal-dialog">
+                      <div class="modal-content bg-danger">
+                        <div class="modal-header">
+                          <h4 class="modal-title"><i class="icon fas fa-exclamation-triangle"></i> Hapus Kategori !!</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <label>Apakah anda yakin ingin menghapus Kategori:</label>
+                          <p><?= $kategori["nama"]; ?></p>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Tidak</button>
+                          <a href="hapuskategori.php?id=<?= $kategori["id"]; ?>" class="btn btn-default">Hapus</a>
+                        </div>
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+                  
+                  <!-- modal ubah kategori -->
+                  <div class="modal fade" id="ubah-<?= $kategori['id']; ?>">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Ubah Kategori Produk</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+
+                        <form action="ubahkategori.php" method="post" enctype="multipart/form-data">              
+                        <div class="card-body">
+                          <div class="form-group">
+                            <label for="id">ID Kategori: <?= $kategori["id"]; ?></label>
+                            <input type="hidden" class="form-control" name="id" id="id" required value="<?= $kategori["id"]; ?>">
+                          </div>
+
+                          <div class="form-group">
+                            <label for="nama">Nama Kategori</label>
+                            <input type="text" class="form-control" name="nama" id="nama" required value="<?= $kategori["nama"]; ?>">
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" name="submit" class="btn btn-danger">Ubah Kategori</button>
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+                      </form>
+                        
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+
+                    <!-- modal tambah kategori -->
+                    <div class="modal fade" id="tambah-kategori">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Tambahkan Kategori</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+
+                          <form action="tambahkategori.php" method="post" enctype="multipart/form-data">
+                            <div class="card-body">
+                                                              
+                                <input type="hidden" class="form-control" name="id" id="id" placeholder="ID Kategori">
+                              
+                              <div class="form-group">
+                                <label for="nama">Nama Kategori</label>
+                                <input type="text" class="form-control" name="nama" id="nama" required placeholder="Nama Kategori">
+                              </div>
+
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" name="submit" class="btn btn-danger">Tambah Kategori</button>
+                              </div>
+                            </div>
+                            <!-- /.card-body -->
+                          </form>
+
+                          
+                        </div>
+                        <!-- /.modal-content -->
+                      </div>
+                      <!-- /.modal-dialog -->
+                    </div>
+
+                    <?php endforeach; ?>
                   
                   </tbody>
                 </table>
@@ -337,10 +437,14 @@ $daftar_kategori = query("SELECT * FROM kategori");
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<!-- Toastr -->
+<script src="plugins/toastr/toastr.min.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
+<!-- Notif dari Toastr -->
+<script src="dist/js/notif.js"></script>
 <!-- Page specific script -->
 <script>
   $(function () {

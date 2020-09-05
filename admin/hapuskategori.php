@@ -11,17 +11,17 @@ require '../functions.php';
 $id = $_GET["id"];
 
 if( hapuskategori($id) > 0 ) {
+	setcookie('hapusBerhasil', 'berhasil',time()+5);
 	echo "
-			<script>
-				alert('Kategori berhasil dihapus');
-				document.location.href = 'daftarproduk.php';
+			<script>				
+				document.location.href = 'kategori.php';
 			</script>
 		";
 }else {
+	setcookie('hapusGagal', 'gagal',time()+5);
 	echo "
-			<script>
-				alert('Kategori gagal dihapus');
-				document.location.href = 'daftarproduk.php';
+			<script>				
+				document.location.href = 'kategori.php';
 			</script>
 		";
 }

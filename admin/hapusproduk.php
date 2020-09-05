@@ -11,16 +11,16 @@ require '../functions.php';
 $id = $_GET["id"];
 
 if( hapusproduk($id) > 0 ) {
+	setcookie('hapusBerhasil', 'berhasil',time()+5);
 	echo "
-			<script>
-				alert('Produk berhasil dihapus');
+			<script>				
 				document.location.href = 'daftarproduk.php';
 			</script>
 		";
 }else {
+	setcookie('hapusGagal', 'gagal',time()+5); 
 	echo "
-			<script>
-				alert('Produk gagal dihapus');
+			<script>				
 				document.location.href = 'daftarproduk.php';
 			</script>
 		";

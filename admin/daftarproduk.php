@@ -9,9 +9,12 @@ if( !isset($_SESSION["masuk"]) ) {
 require '../functions.php';
 require 'tampilusers.php';
 $daftar_produk = query("SELECT * FROM produk");
+notif();
+
 
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,10 +32,13 @@ $daftar_produk = query("SELECT * FROM produk");
   <!-- DataTables -->
   <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="plugins/toastr/toastr.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
+
 <div class="wrapper">
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -276,8 +282,7 @@ $daftar_produk = query("SELECT * FROM produk");
               <!-- /.card-header -->
               <div class="card-body">
                 <!-- Tambah data mahasiswa -->
-              <a href="tambahproduk.php" type="submit" name="tambah" class="btn btn-primary">
-              <i class="nav-icon fas fa-plus"></i> Tambah Produk</a>
+              <button type="submit" name="tambah" class="btn btn-primary" data-toggle="modal" data-target="#tambah-produk"><i class="nav-icon fas fa-plus"></i> Tambah Produk</button>
               <br><br>
 
                 <table id="example1" class="table table-bordered table-striped">
@@ -300,15 +305,203 @@ $daftar_produk = query("SELECT * FROM produk");
                     <td><?= $produk["nama"]; ?></td>
                     <td>Rp. <?= rupiah($produk["harga"]); ?>,-</td>                    
                     <td>
-                      <a href="#" class="btn btn-sm btn-success">
-                      <i class="nav-icon fas fa-search"></i> Detail</a>
-                      <a href="ubahproduk.php?id=<?= $produk["id"]; ?>" class="btn btn-sm btn-info">
-                      <i class="nav-icon fas fa-pen"></i> Ubah</a>
-                      <a href="hapusproduk.php?id=<?= $produk["id"]; ?>" class="btn btn-sm btn-danger">
-                      <i class="nav-icon fas fa-trash"></i> Hapus</a>
+                      <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#detail-<?= $produk["id"]; ?>">
+                      <i class="nav-icon fas fa-search"></i> Detail</button>
+                      <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#ubah-<?= $produk["id"]; ?>">
+                      <i class="nav-icon fas fa-pen"></i> Ubah</button>
+                      <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#hapus-<?= $produk["id"]; ?>">
+                      <i class="nav-icon fas fa-trash"></i> Hapus</button>
                     </td>
                   </tr>
                   <?php $i++; ?>
+
+                  <!-- modal hapus -->
+                  <div class="modal fade" id="hapus-<?= $produk["id"]; ?>">
+                    <div class="modal-dialog">
+                      <div class="modal-content bg-danger">
+                        <div class="modal-header">
+                          <h4 class="modal-title"><i class="icon fas fa-exclamation-triangle"></i> Hapus Produk !!</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <label>Apakah anda yakin ingin menghapus produk :</label>
+                          <p><?= $produk["nama"]; ?></p>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Tidak</button>
+                          <a href="hapusproduk.php?id=<?= $produk["id"]; ?>" class="btn btn-default">Hapus</a>
+                        </div>
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+
+                  <!-- modal tambah produk -->
+                  <div class="modal fade" id="tambah-produk">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title"><i class="nav-icon ion ion-bag"></i> Tambah Produk</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>                        
+
+                          <form action="tambahproduk.php" method="post" enctype="multipart/form-data">
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label for="nama">Nama Produk</label>
+                              <input type="text" class="form-control" name="nama" id="nama" required placeholder="Nama Produk">
+                            </div>
+                            <div class="form-group">
+                              <label for="harga">Harga Produk</label>
+                              <input type="text" class="form-control" name="harga" id="harga" required placeholder="Harga Produk">
+                            </div>
+                            <div class="form-group">
+                              <label for="keterangan">Keterangan</label>
+                              <textarea class="form-control" rows="3" name="keterangan" id="keterangan" placeholder="Keterangan"></textarea>
+                            </div>       
+                            <div class="form-group">
+                              <label for="kategori">Kategori</label>
+                              <select class="form-control" name="kategori" id="kategori">
+                                    <option>-- Kategori --</option>
+                                    <option>SSD</option>
+                                    <option>HDD</option>
+                                    <option>Prosessor</option>
+                                    <option>Motherboard</option>
+                                    <option>RAM</option>
+                                  </select>
+                            </div>   
+
+                            <div class="form-group">
+                              <label for="gambar">Foto Produk</label>
+                              <div class="input-group">
+                                <div class="custom-file">
+                                  <input type="file" class="custom-file-input" name="gambar" id="gambar">
+                                  <label class="custom-file-label" for="gambar">Pilih file</label>
+                                </div>
+                              </div>
+                            </div><br>
+                            
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                              <button type="submit" name="submit" class="btn btn-danger">Tambah Produk</button>
+                            
+                          </div>
+                          <!-- /.card-body -->
+                        </form>                        
+                        
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+                  <!-- /.modal -->
+
+                  <!-- modal detail produk -->
+                  <div class="modal fade" id="detail-<?= $produk["id"]; ?>">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Detail Produk</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          
+                          <p align="center"><img width="175px" src="../images/produk/<?= $produk["gambar"]; ?>"></p>
+                          
+                          <label>Nama Produk : </label>
+                          <p><?= $produk["nama"]; ?></p>
+                          
+                          
+                          <label>Harga Produk : </label>
+                          <p>Rp. <?= rupiah($produk["harga"]); ?>,-</p>
+                          
+
+                          <label>Keterangan : </label>
+                          <p><?= $produk["keterangan"]; ?></p>
+                          
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                          <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                        </div>
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+                  <!-- /.modal detail -->
+
+                  <!-- modal ubdah produk -->
+                  <div class="modal fade" id="ubah-<?= $produk["id"]; ?>">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Ubah Produk</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        
+                        <form action="ubahproduk.php" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="id" value="<?= $produk["id"]; ?>">
+                                <input type="hidden" name="gambarLama" value="<?= $produk["gambar"]; ?>">
+
+                                <div class="card-body">
+                                  <div class="form-group">
+                                    <label for="nama">Nama Produk</label>
+                                    <input type="text" class="form-control" name="nama" id="nama" required value="<?= $produk["nama"]; ?>">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="harga">Harga Produk</label>
+                                    <input type="text" class="form-control" name="harga" id="harga" required value="<?= $produk["harga"]; ?>">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="keterangan">Keterangan</label>
+                                    <textarea class="form-control" rows="3" name="keterangan" id="keterangan"><?= $produk["keterangan"]; ?></textarea>
+                                  </div>       
+                                  <div class="form-group">
+                                    <label for="kategori">Kategori</label>
+                                    <select class="form-control" name="kategori" id="kategori">                          
+                                          <option>-- Pilih --</option>
+                                          <option>SSD</option>
+                                          <option>HDD</option>
+                                          <option>Prosessor</option>
+                                          <option>Motherboard</option>
+                                          <option>RAM</option>
+                                        </select>
+                                  </div>   
+
+                                  <div class="form-group">
+                                    <label for="gambar">Foto Produk</label>
+                                    <div class="input-group">
+                                      <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="gambar" id="gambar">
+                                        <label class="custom-file-label" for="gambar">Pilih file</label>
+                                      </div>
+                                    </div><br>
+                                    
+                                    <img src="../images/produk/<?= $produk["gambar"];  ?>" width="85">
+                                    
+                                  </div>
+
+                                  <div class="justify-content-between">
+                                  <button type="submit" name="submit" class="btn btn-danger">Ubah Produk</button>
+                                  </div>
+                                </div>
+                                <!-- /.card-body -->
+                              </form>                         
+                                                
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+                  <!-- /.modal detail -->
                   <?php endforeach; ?>
                   
                   </tbody>
@@ -345,10 +538,14 @@ $daftar_produk = query("SELECT * FROM produk");
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<!-- Toastr -->
+<script src="plugins/toastr/toastr.min.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
+<!-- Notif dari Toastr -->
+<script src="dist/js/notif.js"></script>
 <!-- Page specific script -->
 <script>
   $(function () {
@@ -367,5 +564,7 @@ $daftar_produk = query("SELECT * FROM produk");
     });
   });
 </script>
+
+
 </body>
 </html>

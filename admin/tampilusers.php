@@ -6,7 +6,7 @@ if( !isset($_SESSION["masuk"]) ) {
 }
 
 $row = namauser($_COOKIE);
-$admin = $row["username"];
+$admin = $row["nama"];
 
 
 ?>

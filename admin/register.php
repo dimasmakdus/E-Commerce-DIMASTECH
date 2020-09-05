@@ -42,8 +42,8 @@ if( isset($_POST["register"]) ) {
       <div class="login-logo"><img width="185px" src="../images/icons/logodimas.png"></div>
       <p class="login-box-msg">Register a new membership</p>
 
-      <form action="" method="post">
-        <div class="input-group mb-3">
+      <form action="" method="post" id="registrasi">
+        <div class="input-group mb-3 form-group">
           <input type="text" class="form-control" placeholder="Nama Lengkap" name="nama" id="nama">
           <div class="input-group-append">
             <div class="input-group-text">
@@ -51,7 +51,7 @@ if( isset($_POST["register"]) ) {
             </div>
           </div>
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 form-group">
           <input type="email" class="form-control" placeholder="Email" name="email" id="email">
           <div class="input-group-append">
             <div class="input-group-text">
@@ -59,7 +59,7 @@ if( isset($_POST["register"]) ) {
             </div>
           </div>
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 form-group">
           <input type="text" class="form-control" placeholder="Username" name="username" id="username">
           <div class="input-group-append">
             <div class="input-group-text">
@@ -67,7 +67,7 @@ if( isset($_POST["register"]) ) {
             </div>
           </div>
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 form-group">
           <input type="password" class="form-control" placeholder="Password" name="password" id="password">
           <div class="input-group-append">
             <div class="input-group-text">
@@ -75,7 +75,7 @@ if( isset($_POST["register"]) ) {
             </div>
           </div>
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 form-group">
           <input type="password" class="form-control" placeholder="Retype password" name="password2" id="password2">
           <div class="input-group-append">
             <div class="input-group-text">
@@ -85,7 +85,7 @@ if( isset($_POST["register"]) ) {
         </div>
         <div class="row">
           <div class="col-8">
-            <div class="icheck-primary">
+            <div class="icheck-primary form-group">
               <input type="checkbox" id="agreeTerms" name="terms" value="agree" required="">
               <label for="agreeTerms">
                I agree to the
@@ -111,7 +111,76 @@ if( isset($_POST["register"]) ) {
 <script src="plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- jquery-validation -->
+<script src="plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="plugins/jquery-validation/additional-methods.min.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
+
+<script>
+$(function () {
+  $.validator.setDefaults({
+    
+  });
+  $('#registrasi').validate({
+    rules: {
+      nama: {
+        required: true,                
+      },
+      username: {
+        required: true,
+        minlength: 5        
+      },
+      email: {
+        required: true,
+        email: true,        
+      },
+      password: {
+        required: true,
+        minlength: 5
+      },
+      password2: {
+        required: true,
+        minlength: 5
+      },
+      terms: {
+        required: true
+      },      
+    },
+    messages: {
+      nama: {
+        required: "Buat nama anda terlebih dahulu"               
+      },
+      username: {
+        required: "Buat username terlebih dahulu"               
+      },
+      email: {
+        required: "Masukkan email anda terlebih dahulu",
+        email: "Tolong masukkan email yang benar"        
+      },
+      password: {
+        required: "Buat password terlebih dahulu",
+        minlength: "Password anda kurang dari 5 karakter"
+      },
+      password2: {
+        required: "Tolong Masukkan pasword konfirmasi!",
+        minlength: "Password anda kurang dari 5 karakter"
+      },
+      terms: "Please accept our terms"
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+</script>
 </body>
 </html>

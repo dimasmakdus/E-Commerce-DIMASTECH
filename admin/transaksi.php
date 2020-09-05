@@ -293,13 +293,50 @@ $daftar_transaksi = query("SELECT * FROM pengiriman");
                     <td><?= $transaksi["nama"]; ?></td>
                     <td><?= $transaksi["alamat"]; ?></td>
                     <td><?= $transaksi["kurir"]; ?></td>
-                    <td><?= $transaksi["totalharga"]; ?></td>
+                    <td>Rp. <?= $transaksi["totalharga"]; ?>,-</td>
                     <td>
-                      <a href="" class="btn btn-sm btn-info">
-                      <i class="nav-icon fas fa-search"></i> Detail</a>
+                      <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#transaksi-<?= $transaksi['id']; ?>">
+                      <i class="nav-icon fas fa-search"></i> Detail</button>
                     </td>
                   </tr>
                   <?php $i++; ?>
+
+                  <!-- modal detail transaksi -->
+                  <div class="modal fade" id="transaksi-<?= $transaksi['id']; ?>">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title"><i class="nav-icon fas fa-users"></i> Detail Transaksi User</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <label>ID Transaksi :</label>
+                          <p>PUT-<?= $transaksi['id']; ?></p>
+
+                          <label>Nama Pembeli :</label>
+                          <p><?= $transaksi['nama']; ?></p>
+
+                          <label>Alamat Pembeli :</label>
+                          <p><?= $transaksi['alamat']; ?></p>
+
+                          <label>Kurir Pengiriman :</label>
+                          <p><?= $transaksi['kurir']; ?></p>
+
+                          <label>Total Harga :</label>
+                          <p>Rp. <?= $transaksi['totalharga']; ?>,-</p>
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>                          
+                        </div>
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+
                 <?php endforeach; ?>
                   
                   
