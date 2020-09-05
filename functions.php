@@ -16,7 +16,6 @@ $id_cpu = mysqli_query($conn, "SELECT * FROM produk WHERE kategori = '3' ");
 $id_mobo = mysqli_query($conn, "SELECT * FROM produk WHERE kategori = '4' ");
 $id_ram = mysqli_query($conn, "SELECT * FROM produk WHERE kategori = '5' ");
 
-
 function query($query) {
 	global $conn;
 	$result = mysqli_query($conn, $query);
@@ -103,7 +102,7 @@ function ubahKategori($data) {
 	$id = $data["id"];
 	$nama = $data["nama"];
 
-	$query = "UPDATE kategori SET nama = $nama WHERE id = $id";
+	$query = "UPDATE kategori SET nama = '$nama' WHERE id = $id";
 	mysqli_query($conn, $query);
 
 	return mysqli_affected_rows($conn);
@@ -166,7 +165,7 @@ function kirim($data) {
 
 }
 
-function tmbahKategori($data) {
+function tambahKategori($data) {
 	global $conn;
 	$nama = htmlspecialchars($data["nama"]);
 	
@@ -290,10 +289,31 @@ function registrasi($data) {
 function namauser($user) {
 	global $conn;
 	$id = $user["dims"];
-	$result = mysqli_query($conn, "SELECT username FROM users WHERE id = '$id' ");
+	$result = mysqli_query($conn, "SELECT nama FROM users WHERE id = '$id' ");
 	$row = mysqli_fetch_assoc($result);
 
 	return $row;
+}
+
+function notif() {
+
+	if (isset($_COOKIE["ubahBerhasil"])) {
+	    echo "<div class='ubahBerhasil'></div>";
+	} else if(isset($_COOKIE["ubahGagal"])) {
+	    echo "<div class='ubahGagal'></div>";
+	}
+
+	if (isset($_COOKIE["tambahBerhasil"])) {
+	    echo "<div class='tambahBerhasil'></div>";
+	} else if (isset($_COOKIE["tambahGagal"])) {
+	    echo "<div class='tambahGagal'></div>";
+	}
+
+	if (isset($_COOKIE["hapusBerhasil"])) {
+	    echo "<div class='hapusBerhasil'></div>";
+	} else if (isset($_COOKIE["hapusGagal"])) {
+	    echo "<div class='hapusGagal'></div>";
+	}
 }
 
 
